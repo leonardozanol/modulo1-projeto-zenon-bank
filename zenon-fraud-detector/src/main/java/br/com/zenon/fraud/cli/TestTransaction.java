@@ -1,6 +1,6 @@
 package br.com.zenon.fraud.cli;
 
-import br.com.zenon.fraud.models.Customer;
+import br.com.zenon.fraud.models.TransactionCustomer;
 import br.com.zenon.fraud.models.Transaction;
 import br.com.zenon.fraud.models.TransactionType;
 
@@ -14,8 +14,8 @@ public class TestTransaction {
                 1L,
                 TransactionType.PAYMENT,
                 new BigDecimal("9839.64"),
-                new Customer("C1231006815", new BigDecimal("170130.0"), new BigDecimal("160296.36")),
-                new Customer("M1979787155", new BigDecimal("0.0"), new BigDecimal("0.0")),
+                new TransactionCustomer("C1231006815", new BigDecimal("170130.0"), new BigDecimal("160296.36")),
+                new TransactionCustomer("M1979787155", new BigDecimal("0.0"), new BigDecimal("0.0")),
                 false,
                 false
         );
@@ -24,8 +24,8 @@ public class TestTransaction {
                 743L,
                 TransactionType.CASH_OUT,
                 new BigDecimal("850002.52"),
-                new Customer("C1280323807", new BigDecimal("850002.52"), new BigDecimal("0.0")),
-                new Customer("C873221189", new BigDecimal("6510099.11"), new BigDecimal("7360101.63")),
+                new TransactionCustomer("C1280323807", new BigDecimal("850002.52"), new BigDecimal("0.0")),
+                new TransactionCustomer("C873221189", new BigDecimal("6510099.11"), new BigDecimal("7360101.63")),
                 true,
                 false
         );
