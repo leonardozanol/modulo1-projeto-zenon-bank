@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 public class TransactionIngestor {
@@ -31,7 +32,7 @@ public class TransactionIngestor {
             String line;
 
             while (counter < 1000 && (line = bufferedReader.readLine()) != null) {
-                transactions.add(parseTransaction(line));
+                parseTransaction(line).ifPresent(transactions::add);
                 counter++;
             }
 
@@ -53,18 +54,25 @@ public class TransactionIngestor {
 
     }
 
-    private static Transaction parseTransaction(String line) throws NumberFormatException {
-        String[] fields = line.split(",");
+    private static Optional<Transaction> parseTransaction(String line) {
+        try {
+            String[] fields = line.split(",");
 
-        Long step = Long.parseLong(fields[0]);
-        TransactionType type = TransactionType.valueOf(fields[1]);
-        BigDecimal amount = new BigDecimal(fields[2]);
-        TransactionCustomer origin = new TransactionCustomer(fields[3], new BigDecimal(fields[4]), new BigDecimal(fields[5]));
-        TransactionCustomer recipient = new TransactionCustomer(fields[6], new BigDecimal(fields[7]), new BigDecimal(fields[8]));
-        boolean isFraud = Boolean.parseBoolean(fields[9]);
-        boolean isFlaggedFraud = Boolean.parseBoolean(fields[10]);
+            Long step = Long.parseLong(fields[0]);
+            TransactionType type = TransactionType.valueOf(fields[1]);
+            BigDecimal amount = new BigDecimal(fields[2]);
+            TransactionCustomer origin = new TransactionCustomer(fields[3], new BigDecimal(fields[4]), new BigDecimal(fields[5]));
+            TransactionCustomer recipient = new TransactionCustomer(fields[6], new BigDecimal(fields[7]), new BigDecimal(fields[8]));
+            boolean isFraud = Boolean.parseBoolean(fields[9]);
+            boolean isFlaggedFraud = Boolean.parseBoolean(fields[10]);
 
-        return new Transaction(step, type, amount, origin, recipient, isFraud, isFlaggedFraud);
+            return Optional.of(new Transaction(step, type, amount, origin, recipient, isFraud, isFlaggedFraud));
+
+        } catch (Exception e) {
+            System.err.println("Error: " + line + " | " + e);
+        }
+
+        return Optional.empty();
 
     }
 
