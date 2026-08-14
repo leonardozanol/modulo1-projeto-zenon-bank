@@ -30,8 +30,8 @@ public class TestTransaction {
                 false
         );
 
-        System.out.println("Transação 1: " + transaction1);
-        System.out.println("Transação 2: " + transaction2);
+        IO.println("Transação 1: " + transaction1);
+        IO.println("Transação 2: " + transaction2);
 
     }
 
