@@ -12,8 +12,8 @@ public class TestTransactionIngestor {
 
         List<Transaction> transactions = TransactionIngestor.read("data/PS_20174392719_1491204439457_log.csv");
 
-        transactions.forEach(System.out::println);
         System.out.println("Size Transactions List: " + transactions.size());
+        transactions.stream().limit(10).forEach(System.out::println);
 
     }
 
