@@ -5,7 +5,7 @@ import br.com.zenon.fraud.models.Transaction;
 import java.util.List;
 import java.util.Optional;
 
-public class TransactionListRepository {
+public class TransactionListRepository implements TransactionRepository {
 
     private static List<Transaction> transactions;
 
@@ -13,6 +13,7 @@ public class TransactionListRepository {
         transactions = TransactionIngestor.read(fileName);
     }
 
+    @Override
     public Optional<Transaction> getByNameCustomer(String nameCustomer) {
         return transactions.stream()
                 .filter(transaction -> nameCustomer.equals(transaction.origin().name()))

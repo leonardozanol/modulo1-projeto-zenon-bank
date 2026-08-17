@@ -10,21 +10,31 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.NoSuchFileException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public class TransactionIngestor {
 
     private static final Logger logger = Logger.getLogger(TransactionIngestor.class.getName());
 
-    public static List<Transaction> read(String file) {
+    public static List<Transaction> read(String nameFile) {
         List<Transaction> transactions = new ArrayList<>();
+        readFile(nameFile, transactions::add);
 
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+        return transactions;
+    }
+
+    public static Map<String, Transaction> readToMap(String nameFile) {
+        Map<String, Transaction> transactions  = new HashMap<>();
+        readFile(nameFile, transaction -> transactions.put(transaction.origin().name(), transaction));
+
+        return transactions;
+    }
+
+    private static void readFile(String nameFile, Consumer<Transaction> transactionConsumer) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(nameFile))) {
             if (!bufferedReader.readLine().equals("step,type,amount,nameOrig,oldbalanceOrg,newbalanceOrig,nameDest,oldbalanceDest,newbalanceDest,isFraud,isFlaggedFraud")) {
-                logger.warning("Error CSV HEADER is not valid to this operation");
                 throw new InvalidCsvHeaderException("Header CSV Is Not Valid!");
             }
 
@@ -32,15 +42,13 @@ public class TransactionIngestor {
             String line;
 
             while (counter < 100000 && (line = bufferedReader.readLine()) != null) {
-                parseTransaction(line).ifPresent(transactions::add);
+                parseTransaction(line).ifPresent(transactionConsumer);
                 counter++;
             }
 
-            return transactions;
-
         } catch (NoSuchFileException e) {
-            logger.warning(() -> "Error No Such File" + file);
-            throw new RuntimeException("Error No Such File: " + file);
+            logger.warning(() -> "Error No Such File" + nameFile);
+            throw new RuntimeException("Error No Such File: " + nameFile);
 
         } catch (NumberFormatException e) {
             logger.warning("Error In Number Format");
@@ -49,7 +57,6 @@ public class TransactionIngestor {
         } catch (IOException e) {
             logger.warning(() -> "Error In Application");
             throw new RuntimeException(e);
-
         }
 
     }
