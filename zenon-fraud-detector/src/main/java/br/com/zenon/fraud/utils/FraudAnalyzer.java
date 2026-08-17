@@ -1,41 +1,41 @@
 package br.com.zenon.fraud.utils;
 
 import br.com.zenon.fraud.models.Transaction;
+import br.com.zenon.fraud.models.TransactionType;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FraudAnalyzer {
 
-    private static List<Transaction> transactions;
+    private final List<Transaction> transactions;
 
-    public FraudAnalyzer(String fileName) {
-        transactions = TransactionIngestor.read(fileName);
+    public FraudAnalyzer(List<Transaction> transactions) {
+        this.transactions = transactions.stream().filter(Transaction::isFraud).toList();
     }
 
-    public void getTotalFraud() {
-        System.out.println("Total de Fraudes: " + transactions.stream().filter(Transaction::isFraud).count());
+    public long getTotalFraud() {
+        return transactions.size();
     }
 
-    public void getTopHighestAmount() {
-        System.out.println("Top 3 Fraudes de Maior Valor:");
-        transactions.stream().filter(Transaction::isFraud).sorted(Comparator.reverseOrder()).limit(3).forEach(transaction -> System.out.printf("%.2f%n", transaction.amount()));
+    public List<BigDecimal> getTopHighestAmount() {
+        return transactions.stream().sorted(Comparator.reverseOrder()).limit(3).map(Transaction::amount).toList();
     }
 
-    public void getNameSuspiciousCustomers() {
-        System.out.println("Clientes Suspeitos:");
-        transactions.stream().filter(Transaction::isFraud).sorted(Comparator.reverseOrder()).limit(5).map(transaction -> transaction.origin().name()).distinct().forEach(System.out::println);
+    public Stream<String> getNameSuspiciousCustomers() {
+        return transactions.stream().sorted(Comparator.reverseOrder()).limit(5).map(transaction -> transaction.origin().name()).distinct();
     }
 
-    public void getTotalLoss() {
-        System.out.println("Prejuízo Total: " + transactions.stream().filter(Transaction::isFraud).map(Transaction::amount).reduce(BigDecimal::add).orElse(new BigDecimal("0.0")));
+    public BigDecimal getTotalLoss() {
+        return transactions.stream().map(Transaction::amount).reduce(BigDecimal::add).orElse(new BigDecimal("0.0"));
     }
 
-    public void getFraudByType() {
-        System.out.println("Fraudes por Tipo:");
-        transactions.stream().filter(Transaction::isFraud).collect(Collectors.groupingBy(Transaction::type)).forEach((type, trans) -> System.out.println(" - " + type.name() + ": " + trans.size()));
+    public Map<TransactionType, Long> getFraudByType() {
+        return transactions.stream().collect(Collectors.groupingBy(Transaction::type, Collectors.counting()));
     }
 
 }
