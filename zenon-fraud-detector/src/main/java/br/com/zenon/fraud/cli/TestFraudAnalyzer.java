@@ -1,21 +1,37 @@
 package br.com.zenon.fraud.cli;
 
+import br.com.zenon.fraud.models.Transaction;
 import br.com.zenon.fraud.utils.FraudAnalyzer;
+import br.com.zenon.fraud.utils.TransactionIngestor;
+
+import java.util.List;
 
 public class TestFraudAnalyzer {
 
     static void main() {
 
-        FraudAnalyzer fraudAnalyzer = new FraudAnalyzer("data/PS_20174392719_1491204439457_log.csv");
-        fraudAnalyzer.getTotalFraud();
+        List<Transaction> transactions = TransactionIngestor.read("data/PS_20174392719_1491204439457_log.csv");
 
-        fraudAnalyzer.getTopHighestAmount();
+        FraudAnalyzer fraudAnalyzer = new FraudAnalyzer(transactions);
 
-        fraudAnalyzer.getNameSuspiciousCustomers();
+        System.out.println("Total de Fraudes: " + fraudAnalyzer.getTotalFraud());
 
-        fraudAnalyzer.getTotalLoss();
+        System.out.println("Top 3 Fraudes de Maior Valor:");
+        fraudAnalyzer.getTopHighestAmount().forEach(value -> {
+            System.out.printf(" - %.2f%n", value);
+        });
 
-        fraudAnalyzer.getFraudByType();
+        System.out.println("Clientes Suspeitos:");
+        fraudAnalyzer.getNameSuspiciousCustomers().forEach(name -> {
+            System.out.println(" - " + name);
+        });
+
+        System.out.println("Prejuízo Total: " + fraudAnalyzer.getTotalLoss());
+
+        System.out.println("Fraudes por Tipo:");
+        fraudAnalyzer.getFraudByType().forEach((type, count) -> {
+            System.out.println(type + ": " + count);
+        });
 
     }
 
