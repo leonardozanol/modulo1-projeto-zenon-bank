@@ -11,6 +11,12 @@ public class TestFraudAnalyzer {
 
         fraudAnalyzer.getTopHighestAmount();
 
+        fraudAnalyzer.getNameSuspiciousCustomers();
+
+        fraudAnalyzer.getTotalLoss();
+
+        fraudAnalyzer.getFraudByType();
+
     }
 
 }
