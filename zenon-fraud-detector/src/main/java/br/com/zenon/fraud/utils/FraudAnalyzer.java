@@ -5,8 +5,6 @@ import br.com.zenon.fraud.models.Transaction;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class FraudAnalyzer {
@@ -23,9 +21,7 @@ public class FraudAnalyzer {
 
     public void getTopHighestAmount() {
         System.out.println("Top 3 Fraudes de Maior Valor:");
-        transactions.stream().filter(Transaction::isFraud).sorted(Comparator.reverseOrder()).limit(3).forEach(transaction -> {
-            System.out.printf("%.2f%n", transaction.amount());
-        });
+        transactions.stream().filter(Transaction::isFraud).sorted(Comparator.reverseOrder()).limit(3).forEach(transaction -> System.out.printf("%.2f%n", transaction.amount()));
     }
 
     public void getNameSuspiciousCustomers() {
@@ -39,9 +35,7 @@ public class FraudAnalyzer {
 
     public void getFraudByType() {
         System.out.println("Fraudes por Tipo:");
-        transactions.stream().filter(Transaction::isFraud).collect(Collectors.groupingBy(Transaction::type)).forEach((type, trans) -> {
-            System.out.println(" - " + type.name() + ": " + trans.size());
-        });
+        transactions.stream().filter(Transaction::isFraud).collect(Collectors.groupingBy(Transaction::type)).forEach((type, trans) -> System.out.println(" - " + type.name() + ": " + trans.size()));
     }
 
 }
