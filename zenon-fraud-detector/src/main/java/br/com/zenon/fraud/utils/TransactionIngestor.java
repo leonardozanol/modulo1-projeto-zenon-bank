@@ -31,7 +31,7 @@ public class TransactionIngestor {
             int counter = 0;
             String line;
 
-            while (counter < 1000 && (line = bufferedReader.readLine()) != null) {
+            while (counter < 50000 && (line = bufferedReader.readLine()) != null) {
                 parseTransaction(line).ifPresent(transactions::add);
                 counter++;
             }
@@ -63,8 +63,8 @@ public class TransactionIngestor {
             BigDecimal amount = new BigDecimal(fields[2]);
             TransactionCustomer origin = new TransactionCustomer(fields[3], new BigDecimal(fields[4]), new BigDecimal(fields[5]));
             TransactionCustomer recipient = new TransactionCustomer(fields[6], new BigDecimal(fields[7]), new BigDecimal(fields[8]));
-            boolean isFraud = Boolean.parseBoolean(fields[9]);
-            boolean isFlaggedFraud = Boolean.parseBoolean(fields[10]);
+            boolean isFraud = "1".equals(fields[9]);
+            boolean isFlaggedFraud = "1".equals(fields[10]);
 
             return Optional.of(new Transaction(step, type, amount, origin, recipient, isFraud, isFlaggedFraud));
 
