@@ -31,7 +31,7 @@ public class TransactionIngestor {
             int counter = 0;
             String line;
 
-            while (counter < 50000 && (line = bufferedReader.readLine()) != null) {
+            while (counter < 100000 && (line = bufferedReader.readLine()) != null) {
                 parseTransaction(line).ifPresent(transactions::add);
                 counter++;
             }
