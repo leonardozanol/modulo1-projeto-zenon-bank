@@ -10,14 +10,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.NoSuchFileException;
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 public class TransactionIngestor {
 
     private static final Logger logger = Logger.getLogger(TransactionIngestor.class.getName());
-    private static final long MAX_LINES_READ = 100_000;
 
     public static List<Transaction> read(String nameFile) {
         List<Transaction> transactions = new ArrayList<>();
@@ -27,12 +27,10 @@ public class TransactionIngestor {
                 throw new InvalidCsvHeaderException("Header CSV Is Not Valid!");
             }
 
-            int counter = 0;
             String line;
 
-            while (counter < MAX_LINES_READ && (line = bufferedReader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
                 parseTransaction(line).ifPresent(transactions::add);
-                counter++;
             }
 
             return transactions;
