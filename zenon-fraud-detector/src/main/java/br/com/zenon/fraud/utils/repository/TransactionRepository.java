@@ -1,4 +1,4 @@
-package br.com.zenon.fraud.utils;
+package br.com.zenon.fraud.utils.repository;
 
 import br.com.zenon.fraud.models.Transaction;
 

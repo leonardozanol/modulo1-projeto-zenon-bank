@@ -1,16 +1,18 @@
-package br.com.zenon.fraud.utils;
+package br.com.zenon.fraud.utils.repository;
 
 import br.com.zenon.fraud.models.Transaction;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class TransactionListRepository implements TransactionRepository {
 
-    private static List<Transaction> transactions;
+    private final List<Transaction> transactions;
 
-    public TransactionListRepository(String fileName) {
-        transactions = TransactionIngestor.read(fileName);
+    public TransactionListRepository(List<Transaction> transactions) {
+        Objects.requireNonNull(transactions);
+        this.transactions = transactions;
     }
 
     @Override

@@ -17,22 +17,11 @@ import java.util.logging.Logger;
 public class TransactionIngestor {
 
     private static final Logger logger = Logger.getLogger(TransactionIngestor.class.getName());
+    private static final long MAX_LINES_READ = 100_000;
 
     public static List<Transaction> read(String nameFile) {
         List<Transaction> transactions = new ArrayList<>();
-        readFile(nameFile, transactions::add);
 
-        return transactions;
-    }
-
-    public static Map<String, Transaction> readToMap(String nameFile) {
-        Map<String, Transaction> transactions  = new HashMap<>();
-        readFile(nameFile, transaction -> transactions.put(transaction.origin().name(), transaction));
-
-        return transactions;
-    }
-
-    private static void readFile(String nameFile, Consumer<Transaction> transactionConsumer) {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(nameFile))) {
             if (!bufferedReader.readLine().equals("step,type,amount,nameOrig,oldbalanceOrg,newbalanceOrig,nameDest,oldbalanceDest,newbalanceDest,isFraud,isFlaggedFraud")) {
                 throw new InvalidCsvHeaderException("Header CSV Is Not Valid!");
@@ -41,10 +30,12 @@ public class TransactionIngestor {
             int counter = 0;
             String line;
 
-            while (counter < 100000 && (line = bufferedReader.readLine()) != null) {
-                parseTransaction(line).ifPresent(transactionConsumer);
+            while (counter < MAX_LINES_READ && (line = bufferedReader.readLine()) != null) {
+                parseTransaction(line).ifPresent(transactions::add);
                 counter++;
             }
+
+            return transactions;
 
         } catch (NoSuchFileException e) {
             logger.warning(() -> "Error No Such File" + nameFile);
@@ -58,7 +49,6 @@ public class TransactionIngestor {
             logger.warning(() -> "Error In Application");
             throw new RuntimeException(e);
         }
-
     }
 
     private static Optional<Transaction> parseTransaction(String line) {
