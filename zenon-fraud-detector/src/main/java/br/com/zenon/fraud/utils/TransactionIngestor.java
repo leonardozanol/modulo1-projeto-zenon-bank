@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 public class TransactionIngestor {
 
     private static final Logger logger = Logger.getLogger(TransactionIngestor.class.getName());
+    private static final long MAX_LINES_READ = 100_000;
 
     public static List<Transaction> read(String nameFile) {
         List<Transaction> transactions = new ArrayList<>();
@@ -27,10 +28,12 @@ public class TransactionIngestor {
                 throw new InvalidCsvHeaderException("Header CSV Is Not Valid!");
             }
 
+            int counter = 0;
             String line;
 
-            while ((line = bufferedReader.readLine()) != null) {
+            while (counter < MAX_LINES_READ && (line = bufferedReader.readLine()) != null) {
                 parseTransaction(line).ifPresent(transactions::add);
+                counter++;
             }
 
             return transactions;
