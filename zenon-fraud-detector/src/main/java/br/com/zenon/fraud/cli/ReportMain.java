@@ -20,14 +20,20 @@ public class ReportMain {
         TransactionReport transactionReport = new TransactionReport();
         Statistics statistics = transactionReport.report("data/PS_20174392719_1491204439457_log.csv");
 
-        System.out.println(resourceBundle.getString("report.main.totalLines") + ": " + integerFormat.format(statistics.totalLines()));
-        System.out.println(resourceBundle.getString("report.main.totalFrauds") + ": " + integerFormat.format(statistics.totalFraud()));
-        System.out.println(resourceBundle.getString("report.main.totalValue") + ": " + currencyFormat.format(statistics.totalAmount()));
+        String labelTotalLines = resourceBundle.getString("report.main.totalLines");
+        String labelTotalFrauds = resourceBundle.getString("report.main.totalFrauds");
+        String labelTotalValue = resourceBundle.getString("report.main.totalValue");
+
+        String formattedTotalLines = integerFormat.format(statistics.totalLines());
+        String formattedTotalFrauds = integerFormat.format(statistics.totalFraud());
+        String formattedTotalValue = currencyFormat.format(statistics.totalAmount());
+
+        System.out.printf("%s: %s%n%s: %s%n%s: %s%n", labelTotalLines, formattedTotalLines, labelTotalFrauds, formattedTotalFrauds, labelTotalValue, formattedTotalValue);
 
     }
 
     private static Locale setLocale(String[] args) {
-        if (args.length > 0 && args[0].equals("--pt_br")) {
+        if (args.length > 0 && (args[0].equals("--pt_br") || args[0].equals("-pt_br"))) {
             return Locale.of("pt", "br");
         }
 
