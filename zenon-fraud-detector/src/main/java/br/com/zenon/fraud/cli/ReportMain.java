@@ -24,9 +24,9 @@ public class ReportMain {
         TransactionReport transactionReport = new TransactionReport();
         Statistics statistics = transactionReport.report("data/PS_20174392719_1491204439457_log.csv");
 
-        String labelTotalLines = resourceBundle.getString("report.main.totalLines");
-        String labelTotalFrauds = resourceBundle.getString("report.main.totalFrauds");
-        String labelTotalAmount = resourceBundle.getString("report.main.totalValue");
+        String labelTotalLines = resourceBundle.getString("label.total.lines");
+        String labelTotalFrauds = resourceBundle.getString("label.total.frauds");
+        String labelTotalAmount = resourceBundle.getString("label.total.transactions");
 
         String formattedTotalLines = integerFormatter.format(statistics.totalLines());
         String formattedTotalFrauds = integerFormatter.format(statistics.totalFraud());
