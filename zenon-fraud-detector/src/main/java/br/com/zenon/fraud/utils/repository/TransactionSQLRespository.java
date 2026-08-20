@@ -28,7 +28,7 @@ public class TransactionSQLRespository implements TransactionRepository {
             return Optional.empty();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Transação não encontrada para origin: " + e);
         }
     }
 
@@ -54,7 +54,7 @@ public class TransactionSQLRespository implements TransactionRepository {
             );
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Não foi possível consultar a transação: " + e);
         }
     }
 
@@ -76,8 +76,10 @@ public class TransactionSQLRespository implements TransactionRepository {
             preparedStatement.setBoolean(10, transaction.isFraud());
             preparedStatement.setBoolean(11, transaction.isFlaggedFraud());
 
+            preparedStatement.execute();
+
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Não foi Possível Adiconar a Transação: " + e);
         }
     }
 
