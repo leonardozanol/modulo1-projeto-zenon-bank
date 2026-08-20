@@ -26,8 +26,8 @@ public class TransactionMapRepository implements TransactionRepository {
     }
 
     @Override
-    public boolean save(Transaction transaction) {
-        return false;
+    public void save(Transaction transaction) {
+        transactions.putIfAbsent(transaction.origin().name(), transaction);
     }
 
 }

@@ -59,7 +59,7 @@ public class TransactionSQLRespository implements TransactionRepository {
     }
 
     @Override
-    public boolean save(Transaction transaction) {
+    public void save(Transaction transaction) {
         try (Connection connection = SQLConnection.get()) {
             String sqlInsertTransaction = "INSERT INTO TRANSACTIONS (STEP, TYPE, AMOUNT, NAME_ORIGIN, OLD_BALANCE_ORIGIN, NEW_BALANCE_ORIGIN, NAME_RECIPIENT, OLD_BALANCE_RECIPIENT, NEW_BALANCE_RECIPIENT, IS_FRAUD, IS_FLAGGEDFRAUD) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -75,8 +75,6 @@ public class TransactionSQLRespository implements TransactionRepository {
             preparedStatement.setBigDecimal(9, transaction.recipient().newBalance());
             preparedStatement.setBoolean(10, transaction.isFraud());
             preparedStatement.setBoolean(11, transaction.isFlaggedFraud());
-
-            return preparedStatement.executeUpdate() == 1;
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
