@@ -14,7 +14,7 @@ public class TransactionSQLRespository implements TransactionRepository {
     @Override
     public Optional<Transaction> getByNameCustomer(String nameCustomer) {
         try (Connection connection = SQLConnection.get()) {
-            String sqlSelectCustomer = "SELECT STEP, TYPE, AMOUNT, NAME_ORIGIN, OLD_BALANCE_ORIGIN, NEW_BALANCE_ORIGIN, NAME_RECIPIENT, OLD_BALANCE_RECIPIENT, NEW_BALANCE_RECIPIENT, ISFRAUD, ISFLAGGEDFRAUD FROM TRANSACTIONS WHERE NAME_ORIGIN = ? LIMIT 1";
+            String sqlSelectCustomer = "SELECT STEP, TYPE, AMOUNT, NAME_ORIGIN, OLD_BALANCE_ORIGIN, NEW_BALANCE_ORIGIN, NAME_RECIPIENT, OLD_BALANCE_RECIPIENT, NEW_BALANCE_RECIPIENT, IS_FRAUD, IS_FLAGGEDFRAUD FROM TRANSACTIONS WHERE NAME_ORIGIN = ? LIMIT 1";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sqlSelectCustomer);
             preparedStatement.setString(1, nameCustomer);
@@ -36,8 +36,8 @@ public class TransactionSQLRespository implements TransactionRepository {
                                 rs.getBigDecimal("OLD_BALANCE_RECIPIENT"),
                                 rs.getBigDecimal("NEW_BALANCE_RECIPIENT")
                         ),
-                        rs.getBoolean("ISFRAUD"),
-                        rs.getBoolean("ISFLAGGEDFRAUD")
+                        rs.getBoolean("IS_FRAUD"),
+                        rs.getBoolean("IS_FLAGGEDFRAUD")
                 ));
             }
 
@@ -51,7 +51,7 @@ public class TransactionSQLRespository implements TransactionRepository {
     @Override
     public boolean save(Transaction transaction) {
         try (Connection connection = SQLConnection.get()) {
-            String sqlInsertTransaction = "INSERT INTO TRANSACTIONS (STEP, TYPE, AMOUNT, NAME_ORIGIN, OLD_BALANCE_ORIGIN, NEW_BALANCE_ORIGIN, NAME_RECIPIENT, OLD_BALANCE_RECIPIENT, NEW_BALANCE_RECIPIENT, ISFRAUD, ISFLAGGEDFRAUD) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sqlInsertTransaction = "INSERT INTO TRANSACTIONS (STEP, TYPE, AMOUNT, NAME_ORIGIN, OLD_BALANCE_ORIGIN, NEW_BALANCE_ORIGIN, NAME_RECIPIENT, OLD_BALANCE_RECIPIENT, NEW_BALANCE_RECIPIENT, IS_FRAUD, IS_FLAGGEDFRAUD) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sqlInsertTransaction);
             preparedStatement.setLong(1, transaction.step());
