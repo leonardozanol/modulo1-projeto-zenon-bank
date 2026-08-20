@@ -14,7 +14,7 @@ public class TransactionSQLRespository implements TransactionRepository {
     @Override
     public Optional<Transaction> getByNameCustomer(String nameCustomer) {
         try (Connection connection = SQLConnection.get()) {
-            String sqlSelectCustomer = "SELECT STEP, TYPE, AMOUNT, NAME_ORIGIN, OLD_BALANCE_ORIGIN, NEW_BALANCE_ORIGIN, NAME_RECIPIENT, OLD_BALANCE_RECIPIENT, NEW_BALANCE_RECIPIENT, IS_FRAUD, IS_FLAGGEDFRAUD FROM TRANSACTIONS WHERE NAME_ORIGIN = ? LIMIT 1";
+            String sqlSelectCustomer = "SELECT STEP, TYPE, AMOUNT, NAME_ORIGIN, OLD_BALANCE_ORIGIN, NEW_BALANCE_ORIGIN, NAME_RECIPIENT, OLD_BALANCE_RECIPIENT, NEW_BALANCE_RECIPIENT, IS_FRAUD, IS_FLAGGEDFRAUD FROM TRANSACTIONS WHERE NAME_ORIGIN = ? ORDER BY STEP LIMIT 1";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sqlSelectCustomer);
             preparedStatement.setString(1, nameCustomer);
@@ -22,26 +22,36 @@ public class TransactionSQLRespository implements TransactionRepository {
             ResultSet rs = preparedStatement.executeQuery();
 
             if (rs.next()) {
-                return Optional.of(new Transaction(
-                        rs.getLong("STEP"),
-                        TransactionType.valueOf(rs.getString("TYPE")),
-                        rs.getBigDecimal("AMOUNT"),
-                        new TransactionCustomer(
-                                rs.getString("NAME_ORIGIN"),
-                                rs.getBigDecimal("OLD_BALANCE_ORIGIN"),
-                                rs.getBigDecimal("NEW_BALANCE_ORIGIN")
-                        ),
-                        new TransactionCustomer(
-                                rs.getString("NAME_RECIPIENT"),
-                                rs.getBigDecimal("OLD_BALANCE_RECIPIENT"),
-                                rs.getBigDecimal("NEW_BALANCE_RECIPIENT")
-                        ),
-                        rs.getBoolean("IS_FRAUD"),
-                        rs.getBoolean("IS_FLAGGEDFRAUD")
-                ));
+                return Optional.of(mapResultSetToTransaction(rs));
             }
 
             return Optional.empty();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Transaction mapResultSetToTransaction(ResultSet rs) {
+        try {
+
+            return new Transaction(
+                    rs.getLong("STEP"),
+                    TransactionType.valueOf(rs.getString("TYPE")),
+                    rs.getBigDecimal("AMOUNT"),
+                    new TransactionCustomer(
+                            rs.getString("NAME_ORIGIN"),
+                            rs.getBigDecimal("OLD_BALANCE_ORIGIN"),
+                            rs.getBigDecimal("NEW_BALANCE_ORIGIN")
+                    ),
+                    new TransactionCustomer(
+                            rs.getString("NAME_RECIPIENT"),
+                            rs.getBigDecimal("OLD_BALANCE_RECIPIENT"),
+                            rs.getBigDecimal("NEW_BALANCE_RECIPIENT")
+                    ),
+                    rs.getBoolean("IS_FRAUD"),
+                    rs.getBoolean("IS_FLAGGEDFRAUD")
+            );
 
         } catch (SQLException e) {
             throw new RuntimeException(e);

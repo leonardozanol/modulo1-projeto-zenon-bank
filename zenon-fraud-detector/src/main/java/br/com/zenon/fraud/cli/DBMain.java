@@ -4,6 +4,8 @@ import br.com.zenon.fraud.models.Transaction;
 import br.com.zenon.fraud.utils.TransactionIngestor;
 import br.com.zenon.fraud.utils.repository.TransactionSQLRespository;
 
+import java.util.Optional;
+
 public class DBMain {
 
     static void main(String[] args) {
@@ -21,10 +23,20 @@ public class DBMain {
         }
 
         System.out.println("Buscando Transação pelo Cliente: 'C1231006815'");
-        System.out.println(respository.getByNameCustomer("C1231006815"));
+        Optional<Transaction> transaction = respository.getByNameCustomer("C1231006815");
+        if (transaction.isPresent()) {
+            System.out.println("Transação Encontrada: " + transaction.get());
+        } else {
+            System.out.println("Transação Não Econtrada: 'C1231006815'");
+        }
 
         System.out.println("Buscando Transação pelo Cliente: 'C12345'");
-        System.out.println(respository.getByNameCustomer("C12345"));
+        transaction = respository.getByNameCustomer("C12345");
+        if (transaction.isPresent()) {
+            System.out.println("Transação Encontrada: " + transaction.get());
+        } else {
+            System.out.println("Transação Não Econtrada: 'C12345'");
+        }
 
     }
 
