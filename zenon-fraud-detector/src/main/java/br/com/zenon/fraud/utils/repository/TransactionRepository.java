@@ -8,5 +8,7 @@ public interface TransactionRepository {
 
     Optional<Transaction> getByNameCustomer(String nameCustomer);
 
+    boolean save(Transaction transaction);
+
 }
 

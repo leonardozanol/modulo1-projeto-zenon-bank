@@ -22,4 +22,9 @@ public class TransactionListRepository implements TransactionRepository {
                 .findFirst();
     }
 
+    @Override
+    public boolean save(Transaction transaction) {
+        return false;
+    }
+
 }

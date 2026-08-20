@@ -25,4 +25,9 @@ public class TransactionMapRepository implements TransactionRepository {
         return Optional.ofNullable(transactions.get(nameCustomer));
     }
 
+    @Override
+    public boolean save(Transaction transaction) {
+        return false;
+    }
+
 }

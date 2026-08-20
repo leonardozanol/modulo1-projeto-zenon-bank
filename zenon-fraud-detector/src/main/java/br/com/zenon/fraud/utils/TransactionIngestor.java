@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 public class TransactionIngestor {
 
     private static final Logger logger = Logger.getLogger(TransactionIngestor.class.getName());
-    private static final long MAX_LINES_READ = 100_000;
+    private static final long MAX_LINES_READ = 10_000;
 
     public static List<Transaction> read(String nameFile) {
         List<Transaction> transactions = new ArrayList<>();
