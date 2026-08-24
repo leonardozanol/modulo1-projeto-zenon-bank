@@ -3,6 +3,7 @@ package br.com.zenon.fraud.repositories;
 import br.com.zenon.fraud.models.Transaction;
 import br.com.zenon.fraud.models.TransactionCustomer;
 import br.com.zenon.fraud.models.TransactionType;
+import br.com.zenon.fraud.utils.db.connection.SQLConnection;
 
 import java.sql.*;
 import java.util.List;
@@ -139,18 +140,6 @@ public class TransactionSQLRespository implements TransactionRepository {
         } catch (SQLException e) {
             throw new RuntimeException("Erro Na Conexão com o Banco de Dados: " + e);
         }
-    }
-
-    private class SQLConnection {
-
-        private static final String URL = "jdbc:mysql://localhost:3306/zenonDB";
-        private static final String USER = "root";
-        private static final String PASSWORD = System.getenv("MYSQL_ROOT_PASSWORD");
-
-        public static Connection get() throws SQLException {
-            return DriverManager.getConnection(URL, USER, PASSWORD);
-        }
-
     }
 
 }
