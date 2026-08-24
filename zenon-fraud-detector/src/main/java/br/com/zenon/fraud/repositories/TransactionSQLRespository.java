@@ -7,8 +7,11 @@ import br.com.zenon.fraud.models.TransactionType;
 import java.sql.*;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 public class TransactionSQLRespository implements TransactionRepository {
+
+    private static final Logger logger = Logger.getLogger(TransactionSQLRespository.class.getName());
 
     @Override
     public Optional<Transaction> getByNameCustomer(String nameCustomer) {
@@ -100,6 +103,8 @@ public class TransactionSQLRespository implements TransactionRepository {
                     preparedStatement.setBigDecimal(9, transaction.recipient().newBalance());
                     preparedStatement.setBoolean(10, transaction.isFraud());
                     preparedStatement.setBoolean(11, transaction.isFlaggedFraud());
+
+                    logger.finest("Salvando Transação: " + transaction);
 
                     preparedStatement.execute();
                 }
