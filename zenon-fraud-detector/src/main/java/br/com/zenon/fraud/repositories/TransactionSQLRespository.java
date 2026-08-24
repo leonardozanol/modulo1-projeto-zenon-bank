@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 public class TransactionSQLRespository implements TransactionRepository {
 
     private static final Logger logger = Logger.getLogger(TransactionSQLRespository.class.getName());
+    private static final int SIZE_BATCH = 1_000;
 
     @Override
     public Optional<Transaction> getByNameCustomer(String nameCustomer) {
@@ -89,8 +90,13 @@ public class TransactionSQLRespository implements TransactionRepository {
         String sqlInsertTransaction = "INSERT INTO TRANSACTIONS (STEP, TYPE, AMOUNT, NAME_ORIGIN, OLD_BALANCE_ORIGIN, NEW_BALANCE_ORIGIN, NAME_RECIPIENT, OLD_BALANCE_RECIPIENT, NEW_BALANCE_RECIPIENT, IS_FRAUD, IS_FLAGGEDFRAUD) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = SQLConnection.get()) {
+
+            boolean autoCommit = connection.getAutoCommit();
             try (PreparedStatement preparedStatement = connection.prepareStatement(sqlInsertTransaction)) {
 
+                connection.setAutoCommit(false);
+
+                int count = 0;
                 for (Transaction transaction : transactions) {
                     preparedStatement.setLong(1, transaction.step());
                     preparedStatement.setString(2, transaction.type().name());
@@ -106,11 +112,28 @@ public class TransactionSQLRespository implements TransactionRepository {
 
                     logger.finest("Salvando Transação: " + transaction);
 
-                    preparedStatement.execute();
+                    preparedStatement.addBatch();
+                    count++;
+
+                    if (count % SIZE_BATCH == 0) {
+                        logger.finest("Executando Batch");
+                        preparedStatement.executeBatch();
+                        connection.commit();
+                    }
+
                 }
 
+                logger.finest("Executando Batch Final");
+
+                preparedStatement.executeBatch();
+                connection.commit();
+
             } catch (SQLException e) {
+                connection.rollback();
                 throw new RuntimeException("Não foi possível salvar Transação: " + e);
+
+            } finally {
+                connection.setAutoCommit(autoCommit);
             }
 
         } catch (SQLException e) {
