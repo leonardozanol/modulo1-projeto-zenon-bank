@@ -12,12 +12,12 @@ public class DBMain {
     static void main(String[] args) {
 
         TransactionSQLRespository respository = new TransactionSQLRespository();
-        List<Transaction> transactions = TransactionIngestor.read("data/PS_20174392719_1491204439457_log.csv");
 
         if (args.length > 0 && (args[0].equals("-save") || args[0].equals("--save"))) {
             long timeStart, timeEnd = 0;
 
             timeStart = System.currentTimeMillis();
+            List<Transaction> transactions = TransactionIngestor.read("data/PS_20174392719_1491204439457_log.csv");
             //TransactionIngestor.read("data/PS_20174392719_1491204439457_log.csv").forEach(respository::save);
             respository.saveAll(transactions);
             timeEnd = System.currentTimeMillis();
