@@ -5,6 +5,7 @@ import br.com.zenon.fraud.models.TransactionCustomer;
 import br.com.zenon.fraud.models.TransactionType;
 
 import java.sql.*;
+import java.util.List;
 import java.util.Optional;
 
 public class TransactionSQLRespository implements TransactionRepository {
@@ -78,6 +79,37 @@ public class TransactionSQLRespository implements TransactionRepository {
 
         } catch (SQLException e) {
             throw new RuntimeException("Não foi Possível Adiconar a Transação: " + e);
+        }
+    }
+
+    public void saveAll(List<Transaction> transactions) {
+        String sqlInsertTransaction = "INSERT INTO TRANSACTIONS (STEP, TYPE, AMOUNT, NAME_ORIGIN, OLD_BALANCE_ORIGIN, NEW_BALANCE_ORIGIN, NAME_RECIPIENT, OLD_BALANCE_RECIPIENT, NEW_BALANCE_RECIPIENT, IS_FRAUD, IS_FLAGGEDFRAUD) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection connection = SQLConnection.get()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sqlInsertTransaction)) {
+
+                for (Transaction transaction : transactions) {
+                    preparedStatement.setLong(1, transaction.step());
+                    preparedStatement.setString(2, transaction.type().name());
+                    preparedStatement.setBigDecimal(3, transaction.amount());
+                    preparedStatement.setString(4, transaction.origin().name());
+                    preparedStatement.setBigDecimal(5, transaction.origin().oldBalance());
+                    preparedStatement.setBigDecimal(6, transaction.origin().newBalance());
+                    preparedStatement.setString(7, transaction.recipient().name());
+                    preparedStatement.setBigDecimal(8, transaction.recipient().oldBalance());
+                    preparedStatement.setBigDecimal(9, transaction.recipient().newBalance());
+                    preparedStatement.setBoolean(10, transaction.isFraud());
+                    preparedStatement.setBoolean(11, transaction.isFlaggedFraud());
+
+                    preparedStatement.execute();
+                }
+
+            } catch (SQLException e) {
+                throw new RuntimeException("Não foi possível salvar Transação: " + e);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro Na Conexão com o Banco de Dados: " + e);
         }
     }
 

@@ -4,6 +4,7 @@ import br.com.zenon.fraud.models.Transaction;
 import br.com.zenon.fraud.utils.ingestor.TransactionIngestor;
 import br.com.zenon.fraud.repositories.TransactionSQLRespository;
 
+import java.util.List;
 import java.util.Optional;
 
 public class DBMain {
@@ -11,12 +12,14 @@ public class DBMain {
     static void main(String[] args) {
 
         TransactionSQLRespository respository = new TransactionSQLRespository();
+        List<Transaction> transactions = TransactionIngestor.read("data/PS_20174392719_1491204439457_log.csv");
 
         if (args.length > 0 && (args[0].equals("-save") || args[0].equals("--save"))) {
             long timeStart, timeEnd = 0;
 
             timeStart = System.currentTimeMillis();
-            TransactionIngestor.read("data/PS_20174392719_1491204439457_log.csv").forEach(respository::save);
+            //TransactionIngestor.read("data/PS_20174392719_1491204439457_log.csv").forEach(respository::save);
+            respository.saveAll(transactions);
             timeEnd = System.currentTimeMillis();
 
             System.out.println("Tempo De Execução: " + (timeEnd - timeStart) + " ms.");
