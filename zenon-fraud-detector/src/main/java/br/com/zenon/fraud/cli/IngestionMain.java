@@ -1,10 +1,7 @@
 package br.com.zenon.fraud.cli;
 
-import br.com.zenon.fraud.models.Transaction;
 import br.com.zenon.fraud.repositories.TransactionSQLRespository;
-import br.com.zenon.fraud.utils.ingestor.TransactionIngestor;
-
-import java.util.List;
+import br.com.zenon.fraud.utils.ingestor.EfficientTransactionIngestor;
 
 public class IngestionMain {
 
@@ -14,10 +11,7 @@ public class IngestionMain {
 
         long startTime = System.nanoTime();
 
-        List<Transaction> transactions = TransactionIngestor.read("data/PS_20174392719_1491204439457_log.csv");
-        System.out.println("Quantidade de Transações: " + transactions.size());
-
-        repository.saveAll(transactions);
+        EfficientTransactionIngestor.readAsStream("data/PS_20174392719_1491204439457_log.csv", repository::save);
 
         long endTime = System.nanoTime();
 
