@@ -1,8 +1,8 @@
 package br.com.zenon.fraud.cli;
 
 import br.com.zenon.fraud.models.Transaction;
-import br.com.zenon.fraud.utils.TransactionIngestor;
-import br.com.zenon.fraud.utils.repository.TransactionSQLRespository;
+import br.com.zenon.fraud.utils.ingestor.TransactionIngestor;
+import br.com.zenon.fraud.repositories.TransactionSQLRespository;
 
 import java.util.Optional;
 

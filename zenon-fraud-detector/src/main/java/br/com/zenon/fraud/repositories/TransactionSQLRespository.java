@@ -1,11 +1,9 @@
-package br.com.zenon.fraud.utils.repository;
+package br.com.zenon.fraud.repositories;
 
 import br.com.zenon.fraud.models.Transaction;
 import br.com.zenon.fraud.models.TransactionCustomer;
 import br.com.zenon.fraud.models.TransactionType;
-import com.mysql.cj.jdbc.Driver;
 
-import java.math.BigDecimal;
 import java.sql.*;
 import java.util.Optional;
 

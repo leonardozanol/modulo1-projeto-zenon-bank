@@ -1,7 +1,7 @@
 package br.com.zenon.fraud.cli;
 
-import br.com.zenon.fraud.utils.report.Statistics;
-import br.com.zenon.fraud.utils.report.TransactionReport;
+import br.com.zenon.fraud.models.report.Statistics;
+import br.com.zenon.fraud.models.report.TransactionReport;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

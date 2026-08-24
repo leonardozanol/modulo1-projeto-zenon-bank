@@ -1,13 +1,12 @@
 package br.com.zenon.fraud.cli;
 
 import br.com.zenon.fraud.models.Transaction;
-import br.com.zenon.fraud.utils.TransactionIngestor;
-import br.com.zenon.fraud.utils.repository.TransactionListRepository;
-import br.com.zenon.fraud.utils.repository.TransactionMapRepository;
-import br.com.zenon.fraud.utils.repository.TransactionRepository;
+import br.com.zenon.fraud.utils.ingestor.TransactionIngestor;
+import br.com.zenon.fraud.repositories.TransactionListRepository;
+import br.com.zenon.fraud.repositories.TransactionMapRepository;
+import br.com.zenon.fraud.repositories.TransactionRepository;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class TestBenchmarkListAndMap {

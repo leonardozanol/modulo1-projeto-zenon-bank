@@ -1,4 +1,4 @@
-package br.com.zenon.fraud.utils;
+package br.com.zenon.fraud.utils.ingestor;
 
 import br.com.zenon.fraud.exceptions.InvalidCsvHeaderException;
 import br.com.zenon.fraud.models.Transaction;

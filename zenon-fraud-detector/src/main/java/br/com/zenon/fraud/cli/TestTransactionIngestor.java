@@ -1,9 +1,8 @@
 package br.com.zenon.fraud.cli;
 
 import br.com.zenon.fraud.models.Transaction;
-import br.com.zenon.fraud.utils.TransactionIngestor;
+import br.com.zenon.fraud.utils.ingestor.TransactionIngestor;
 
-import java.io.File;
 import java.util.List;
 
 public class TestTransactionIngestor {
