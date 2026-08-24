@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class TransactionSQLRespository implements TransactionRepository {
 
     private static final Logger logger = Logger.getLogger(TransactionSQLRespository.class.getName());
-    private static final int SIZE_BATCH = 1_000;
+    private static final int JDBC_BATCH_SIZE = 1_000;
 
     @Override
     public Optional<Transaction> getByNameCustomer(String nameCustomer) {
@@ -115,7 +115,7 @@ public class TransactionSQLRespository implements TransactionRepository {
                     preparedStatement.addBatch();
                     count++;
 
-                    if (count % SIZE_BATCH == 0) {
+                    if (count % JDBC_BATCH_SIZE == 0) {
                         logger.finest("Executando Batch");
                         preparedStatement.executeBatch();
                         connection.commit();
