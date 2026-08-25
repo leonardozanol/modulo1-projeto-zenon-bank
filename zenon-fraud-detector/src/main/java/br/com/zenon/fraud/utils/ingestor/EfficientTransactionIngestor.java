@@ -14,13 +14,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class EfficientTransactionIngestor {
 
     private static int LIMIT_BATCHES_READ = 2_500;
-    private static int THREAD_POOL = 10;
+    private final static Semaphore dbPermits = new Semaphore(100);
 
     public static void readAsStream(String fileName, Consumer<Transaction> consumer) {
         try (Stream<String> lines = Files.lines(Path.of(fileName))) {
@@ -35,7 +36,7 @@ public class EfficientTransactionIngestor {
     }
 
     public static void readAsBatch(String fileName, Consumer<List<Transaction>> consumer) {
-        try (ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL); Stream<String> lines = Files.lines(Path.of(fileName)).skip(1)) {
+        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor(); Stream<String> lines = Files.lines(Path.of(fileName)).skip(1)) {
 
             Iterator<String> iterator = lines.iterator();
 
@@ -64,14 +65,23 @@ public class EfficientTransactionIngestor {
     }
 
     private static void executeBatch(List<String> lineBatch, Consumer<List<Transaction>> consumer) {
-        consumer.accept(
-                lineBatch
-                        .stream()
-                        .map(EfficientTransactionIngestor::parseTransaction)
-                        .filter(Optional::isPresent)
-                        .map(Optional::get)
-                        .toList()
-        );
+        try {
+            dbPermits.acquire();
+
+            consumer.accept(
+                    lineBatch
+                            .stream()
+                            .map(EfficientTransactionIngestor::parseTransaction)
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .toList()
+            );
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            dbPermits.release();
+        }
     }
 
     private static Optional<Transaction> parseTransaction(String line) {
