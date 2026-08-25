@@ -19,14 +19,13 @@ import java.util.stream.Stream;
 
 public class EfficientTransactionIngestor {
 
-    private static int LIMIT_READ = 10_000;
     private static int LIMIT_BATCHES_READ = 2_500;
     private static int THREAD_POOL = 10;
 
     public static void readAsStream(String fileName, Consumer<Transaction> consumer) {
         try (Stream<String> lines = Files.lines(Path.of(fileName))) {
 
-            lines.skip(1).limit(LIMIT_READ).map(EfficientTransactionIngestor::parseTransaction).filter(Optional::isPresent).map(Optional::get).forEach(
+            lines.skip(1).map(EfficientTransactionIngestor::parseTransaction).filter(Optional::isPresent).map(Optional::get).forEach(
                     consumer
             );
 
