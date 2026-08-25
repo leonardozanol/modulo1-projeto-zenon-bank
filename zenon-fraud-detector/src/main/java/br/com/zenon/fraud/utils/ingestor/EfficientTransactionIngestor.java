@@ -41,8 +41,7 @@ public class EfficientTransactionIngestor {
             Iterator<String> iterator = lines.iterator();
 
             List<String> lineBatch = new ArrayList<>(LIMIT_BATCHES_READ);
-            int count = 0;
-            while (count < LIMIT_READ && iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 lineBatch.add(iterator.next());
 
                 if (lineBatch.size() > LIMIT_BATCHES_READ) {
@@ -51,8 +50,6 @@ public class EfficientTransactionIngestor {
 
                     executor.submit(() -> executeBatch(currentLineBatch, consumer));
                 }
-
-                count ++;
             }
 
             if (!lineBatch.isEmpty()) {
