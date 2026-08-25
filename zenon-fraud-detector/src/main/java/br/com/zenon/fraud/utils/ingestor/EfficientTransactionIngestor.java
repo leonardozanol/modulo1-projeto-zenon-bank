@@ -12,13 +12,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class EfficientTransactionIngestor {
 
     private static int LIMIT_READ = 10_000;
-    private static int LIMIT_BATCHES_READ = 5_000;
+    private static int LIMIT_BATCHES_READ = 2_500;
+    private static int THREAD_POOL = 10;
 
     public static void readAsStream(String fileName, Consumer<Transaction> consumer) {
         try (Stream<String> lines = Files.lines(Path.of(fileName))) {
@@ -33,29 +36,30 @@ public class EfficientTransactionIngestor {
     }
 
     public static void readAsBatch(String fileName, Consumer<List<Transaction>> consumer) {
-        try (Stream<String> lines = Files.lines(Path.of(fileName))) {
+        try (ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL); Stream<String> lines = Files.lines(Path.of(fileName)).skip(1)) {
 
             Iterator<String> iterator = lines.iterator();
-            if (iterator.hasNext()) {
-                iterator.next();
-            }
 
             List<String> lineBatch = new ArrayList<>(LIMIT_BATCHES_READ);
             int count = 0;
             while (count < LIMIT_READ && iterator.hasNext()) {
                 lineBatch.add(iterator.next());
 
-                if (lineBatch.size() >= LIMIT_BATCHES_READ) {
-                    executeBatch(lineBatch, consumer);
+                if (lineBatch.size() > LIMIT_BATCHES_READ) {
+                    final List<String> currentLineBatch = List.copyOf(lineBatch);
                     lineBatch.clear();
+
+                    executor.submit(() -> executeBatch(currentLineBatch, consumer));
                 }
 
                 count ++;
             }
 
             if (!lineBatch.isEmpty()) {
-                executeBatch(lineBatch, consumer);
+                final List<String> currentLineBatch = List.copyOf(lineBatch);
                 lineBatch.clear();
+
+                executor.submit(() -> executeBatch(currentLineBatch, consumer));
             }
 
         } catch (IOException e) {
