@@ -11,7 +11,7 @@ public class IngestionMain {
 
         long startTime = System.nanoTime();
 
-        EfficientTransactionIngestor.readAsStream("data/PS_20174392719_1491204439457_log.csv", repository::save);
+        EfficientTransactionIngestor.readAsBatch("data/PS_20174392719_1491204439457_log.csv", repository::saveAll);
 
         long endTime = System.nanoTime();
 
